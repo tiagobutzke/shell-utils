@@ -20,6 +20,7 @@ for f in `ls $2 | grep \.sql`; do
 	sed -e '/^UNIQUE KEY^/d' | 
 	sed -e '/^KEY `/d' | 
 	sed -e 's/.*ENGINE=.*/);/' | 
+	sed -e 's/ COMMENT/ , -- /g' | 
 	sed -e 's/ unsigned / /g' |
 	sed -e 's/ NOT NULL AUTO_INCREMENT/ primary key autoincrement/g' |
 	sed -e 's/ AUTO_INCREMENT/ primary key autoincrement/g' |
