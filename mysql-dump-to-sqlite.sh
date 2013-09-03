@@ -2,8 +2,7 @@
 echo "---- Reading path ----"
 
 for f in `ls $2 | grep \.sql`; do
-    if [ -r $2$file ]
-    then 
+    if [ -r $2$file ]; then
         echo "> Importing $f"
 
 	cat $2$f |
@@ -19,6 +18,7 @@ for f in `ls $2 | grep \.sql`; do
 	sed -e '/^commit;/d' | 
 	sed -e '/^(`last_activity`)/d' | 
 	sed -e '/^UNIQUE KEY^/d' | 
+	sed -e '/^KEY `/d' | 
 	sed -e 's/.*ENGINE=.*/);/' | 
 	sed -e 's/ unsigned / /g' |
 	sed -e 's/ NOT NULL AUTO_INCREMENT/ primary key autoincrement/g' |
@@ -30,8 +30,6 @@ for f in `ls $2 | grep \.sql`; do
 	sed -e 's/ character set [^ ]* / /g' |
 	sed -e 's/ enum([^)]*) / varchar(255) /g' |
 	sed -e 's/ on update [^,]*//g' | 
-	sed -e 's/ begin;/ /g' | 
-	
 	perl -e 'local $/;$_=<>;s/,\n\)/\n\)/gs;print "begin;\n";print;print "commit;\n"' |
 	perl -pe '
             if (/^(INSERT.+?)\(/) {
